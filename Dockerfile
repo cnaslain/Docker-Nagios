@@ -282,6 +282,9 @@ RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.co
     ln -s /etc/apache2/conf-available/servername.conf /etc/apache2/conf-enabled/servername.conf    && \
     ln -s /etc/apache2/conf-available/timezone.conf /etc/apache2/conf-enabled/timezone.conf
 
+# Workaround for the new check_ping CRITICAL error: "Could not interpret output from ping command"
+RUN chmod u+s /bin/ping
+
 RUN wget https://www.thawte.com/roots/thawte_Premium_Server_CA.pem -O /etc/ssl/certs/Thawte_Premium_Server_CA.pem && \
     cat /etc/ssl/certs/Thawte_Premium_Server_CA.pem | tee -a /etc/postfix/cacert.pem
 
