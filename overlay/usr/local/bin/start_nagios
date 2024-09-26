@@ -19,6 +19,15 @@ if [ ! -f "${NAGIOS_HOME}/etc/htpasswd.users" ] ; then
   chown -R ${NAGIOS_USER}.${NAGIOS_GROUP} "${NAGIOS_HOME}/etc/htpasswd.users"
 fi
 
+# Hack by CNAS to copy ssh config to nagios user
+
+if [ -d "/orig/.ssh" ] ; then
+    cp -a /orig/.ssh/{config,id_rsa,known_hosts} ${NAGIOS_HOME}/.ssh/
+    chown -R ${NAGIOS_USER}.${NAGIOS_GROUP} ${NAGIOS_HOME}/.ssh
+    chmod 700 ${NAGIOS_HOME}/.ssh
+    chmod 600 ${NAGIOS_HOME}/.ssh/{config,id_rsa,known_hosts}
+fi
+
 shutdown() {
   echo Shutting Down
   ls /etc/service | SHELL=/bin/sh parallel --no-notice sv force-stop {}

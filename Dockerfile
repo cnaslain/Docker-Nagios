@@ -111,7 +111,8 @@ RUN cd /tmp                                           && \
     cd /tmp && rm -Rf qstat
 
 RUN cd /tmp                                                                          && \
-    git clone https://github.com/NagiosEnterprises/nagioscore.git -b $NAGIOS_BRANCH  && \
+    git config --global http.version HTTP/1.1 && \
+    git clone https://github.com/NagiosEnterprises/nagioscore.git --ipv4 -b $NAGIOS_BRANCH  && \
     cd nagioscore                                                                    && \
     ./configure                                  \
         --prefix=${NAGIOS_HOME}                  \
@@ -154,7 +155,10 @@ RUN cd /tmp                                                                  && 
     cd nrpe                                                                  && \
     ./configure                                   \
         --with-ssl=/usr/bin/openssl               \
-        --with-ssl-lib=/usr/lib/x86_64-linux-gnu  \
+# CNAS original value
+#       --with-ssl-lib=/usr/lib/x86_64-linux-gnu  \
+# CNAS added for raspberry pi 3 build
+        --with-ssl-lib=/usr/lib/aarch64-linux-gnu \
                                                                              && \
     make check_nrpe                                                          && \
     cp src/check_nrpe ${NAGIOS_HOME}/libexec/                                && \
@@ -168,7 +172,9 @@ RUN cd /tmp                                                 && \
     ./configure                                                \
         --prefix=${NAGIOS_HOME}                                \
         --with-nsca-user=${NAGIOS_USER}                        \
-        --with-nsca-grp=${NAGIOS_GROUP}                     && \
+        --with-nsca-grp=${NAGIOS_GROUP}                        \
+# CNAS added for raspberry pi 3 build
+	--build=aarch64-unknown-linux-gnu                   && \
     make all                                                && \
     cp src/nsca ${NAGIOS_HOME}/bin/                         && \
     cp src/send_nsca ${NAGIOS_HOME}/bin/                    && \
@@ -287,6 +293,12 @@ RUN chmod u+s /bin/ping
 
 RUN wget https://www.thawte.com/roots/thawte_Premium_Server_CA.pem -O /etc/ssl/certs/Thawte_Premium_Server_CA.pem && \
     cat /etc/ssl/certs/Thawte_Premium_Server_CA.pem | tee -a /etc/postfix/cacert.pem
+
+# Add ssh client package (quick and dirty way to avoid rebuilding all layers)
+# openssh-client to connect to servers by SSH and mosquitto-clients to use the check_mqtt bash script to monitor Mosquitto
+RUN apt-get update && \
+    apt-get install -y openssh-client mosquitto-clients && \
+    apt-get clean && rm -Rf /var/lib/apt/lists/*
 
 EXPOSE 80 5667 
 
