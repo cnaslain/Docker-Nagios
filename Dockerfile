@@ -74,6 +74,8 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libssl-dev                          \
         libswitch-perl                      \
         libwww-perl                         \
+	libcrypt-x509-perl                  \
+	libtext-glob-perl                   \
         m4                                  \
 	mailutils			    \
         netcat                              \
@@ -197,7 +199,7 @@ RUN cd /tmp                                                          && \
     cd /tmp && rm -Rf nagiosgraph
 
 RUN cd /opt                                                                         && \
-    pip install pymssql paho-mqtt pymssql                                           && \
+    pip install pymssql==2.3.0 paho-mqtt==2.1.0 pymssql==2.3.0                      && \
     git clone https://github.com/willixix/naglio-plugins.git     WL-Nagios-Plugins  && \
     git clone https://github.com/JasonRivers/nagios-plugins.git  JR-Nagios-Plugins  && \
     git clone https://github.com/justintime/nagios-plugins.git   JE-Nagios-Plugins  && \
