@@ -15,7 +15,7 @@ if ! [ "${MAIL_RELAY_HOST}" = "" ] && [ "${MAIL_RELAY_USERNAME}" ] && [ "${MAIL_
     postconf smtp_sasl_auth_enable=yes
     postconf smtp_sasl_password_maps=hash:/etc/postfix/sasl_passwd
     postconf smtp_sasl_security_options=noanonymous
-    postconf smtp_tls_CAfile=/etc/ssl/certs/ca-certificates.crt
+    postconf smtp_tls_CAfile=/etc/postfix/cacert.pem
     postconf smtp_tls_security_level=encrypt
     postconf smtp_address_preference=ipv4
     rm /etc/postfix/sasl_passwd
