@@ -293,8 +293,7 @@ RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.co
 # Workaround for the new check_ping CRITICAL error: "Could not interpret output from ping command"
 RUN chmod u+s /bin/ping
 
-RUN wget https://www.thawte.com/roots/thawte_Premium_Server_CA.pem -O /etc/ssl/certs/Thawte_Premium_Server_CA.pem && \
-    cat /etc/ssl/certs/Thawte_Premium_Server_CA.pem | tee -a /etc/postfix/cacert.pem
+RUN cp /etc/ssl/certs/ca-certificates.crt /etc/postfix/cacert.pem
 
 # Add ssh client package (quick and dirty way to avoid rebuilding all layers)
 # openssh-client to connect to servers by SSH and mosquitto-clients to use the check_mqtt bash script to monitor Mosquitto
